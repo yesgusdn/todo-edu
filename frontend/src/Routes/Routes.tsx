@@ -6,12 +6,14 @@ import Counter from "../pages/Counter/Counter";
 import Login from "../pages/Auth/Login";
 import ErrorPage from "../pages/Error/ErrorPage";
 import ProtectedRoute from "./ProtectedRoute";
+import Signup from "../pages/Auth/Signup";
 
 const Routes = () => {
     return (
         <BrowserRouter>
             <RouterRoutes>
                 <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
 
                 <Route path="/" element={<Home />} />
                 <Route
