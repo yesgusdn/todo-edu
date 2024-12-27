@@ -36,7 +36,7 @@ const Home = () => {
                 value={pathValue}
                 onChange={(e) => setPathValue(e.target.value)}
                 placeholder="임의전송path"
-                class="w-40 p-3 border border-gray-300 rounded-lg"
+                className="w-40 p-3 border border-gray-300 rounded-lg"
             />
             <button
                 className="w-40 m-2 p-3 font-semibold rounded-lg shawdow-md text-white bg-blue-500 hover:bg-blue-700"
