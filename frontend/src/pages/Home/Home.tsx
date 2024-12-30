@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getHelloWorldPathVariable } from "../../services/api/HelloWorldApiService";
 
-const Home = () => {
-    const [result, setResult] = useState("");
-    const [pathValue, setPathValue] = useState("");
+const Home: React.FC = () => {
+    const [result, setResult] = useState<string>("");
+    const [pathValue, setPathValue] = useState<string>("");
     const navigate = useNavigate();
 
     // api test
