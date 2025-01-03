@@ -1,101 +1,98 @@
 import { useEffect, useMemo, useState } from "react";
 
 // Theme
-import type {
-    ColDef,
-    RowSelectionOptions,
-    ValueFormatterParams,
-} from "ag-grid-community";
+import type { ColDef } from "ag-grid-community";
 
 // Core CSS
 import { AgGridReact } from "ag-grid-react";
 import type { CustomCellRendererProps } from "ag-grid-react";
 
 import TabButton from "../../components/Button/TabButton";
+import { findStockByCountry } from "../../services/api/StockService";
 
 // Custom Cell Renderer (Display logos based on cell value)
-const CompanyLogoRenderer = (params: CustomCellRendererProps) => (
-    <span
-        style={{
-            display: "flex",
-            height: "100%",
-            width: "100%",
-            alignItems: "center",
-        }}
-    >
-        {params.value && (
-            <img
-                alt={`${params.value} Flag`}
-                src={`https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`}
-                style={{
-                    display: "block",
-                    width: "25px",
-                    height: "auto",
-                    maxHeight: "50%",
-                    marginRight: "12px",
-                    filter: "brightness(1.1)",
-                }}
-            />
-        )}
-        <p
-            style={{
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-            }}
-        >
-            {params.value}
-        </p>
-    </span>
-);
+// const CompanyLogoRenderer = (params: CustomCellRendererProps) => (
+//     <span
+//         style={{
+//             display: "flex",
+//             height: "100%",
+//             width: "100%",
+//             alignItems: "center",
+//         }}
+//     >
+//         {params.value && (
+//             <img
+//                 alt={`${params.value} Flag`}
+//                 src={`https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`}
+//                 style={{
+//                     display: "block",
+//                     width: "25px",
+//                     height: "auto",
+//                     maxHeight: "50%",
+//                     marginRight: "12px",
+//                     filter: "brightness(1.1)",
+//                 }}
+//             />
+//         )}
+//         <p
+//             style={{
+//                 textOverflow: "ellipsis",
+//                 overflow: "hidden",
+//                 whiteSpace: "nowrap",
+//             }}
+//         >
+//             {params.value}
+//         </p>
+//     </span>
+// );
 
 /* Custom Cell Renderer (Display tick / cross in 'Successful' column) */
-const MissionResultRenderer = (params: CustomCellRendererProps) => (
-    <span
-        style={{
-            display: "flex",
-            justifyContent: "center",
-            height: "100%",
-            alignItems: "center",
-        }}
-    >
-        {
-            <img
-                alt={`${params.value}`}
-                src={`https://www.ag-grid.com/example-assets/icons/${
-                    params.value ? "tick-in-circle" : "cross-in-circle"
-                }.png`}
-                style={{ width: "auto", height: "auto" }}
-            />
-        }
-    </span>
-);
+// const MissionResultRenderer = (params: CustomCellRendererProps) => (
+//     <span
+//         style={{
+//             display: "flex",
+//             justifyContent: "center",
+//             height: "100%",
+//             alignItems: "center",
+//         }}
+//     >
+//         {
+//             <img
+//                 alt={`${params.value}`}
+//                 src={`https://www.ag-grid.com/example-assets/icons/${
+//                     params.value ? "tick-in-circle" : "cross-in-circle"
+//                 }.png`}
+//                 style={{ width: "auto", height: "auto" }}
+//             />
+//         }
+//     </span>
+// );
 
-const dateFormatter = (params: ValueFormatterParams): string => {
-    return new Date(params.value).toLocaleDateString("en-us", {
-        weekday: "long",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-    });
-};
+// const dateFormatter = (params: ValueFormatterParams): string => {
+//     return new Date(params.value).toLocaleDateString("en-us", {
+//         weekday: "long",
+//         year: "numeric",
+//         month: "short",
+//         day: "numeric",
+//     });
+// };
 
 // Row Data Interface
-interface IRow {
-    rowNum: number;
-    mission: string;
-    company: string;
-    location: string;
-    date: string;
-    time: string;
-    rocket: string;
-    price: number;
-    successful: boolean;
+export interface Stock {
+    stockCd: string;
+    stockNm: string;
+    country: string;
 }
 
+export type ApiResponse<T> = {
+    success: boolean;
+    data?: T;
+    error?: string;
+};
+
 const Main: React.FC = () => {
-    const [tab, setTab] = useState<number>(1);
-    const [rowData, setRowData] = useState<IRow[]>([]);
+    const [tab, setTab] = useState<Number>(1);
+    const [testData, setTestData] = useState<Stock[] | undefined>();
     // Column Definitions: Defines & controls grid columns.
     const [colDefs] = useState<ColDef[]>([
         {
@@ -107,47 +104,23 @@ const Main: React.FC = () => {
             },
         },
         {
-            field: "mission",
+            field: "stockCd",
+            headerName: "종목",
             width: 150,
         },
         {
-            field: "company",
-            width: 130,
-            cellRenderer: CompanyLogoRenderer,
+            field: "stockNm",
+            headerName: "종목명",
+            width: 150,
         },
-        {
-            field: "location",
-            width: 225,
-        },
-        {
-            field: "date",
-            valueFormatter: dateFormatter,
-        },
-        {
-            field: "price",
-            width: 130,
-            valueFormatter: (params: ValueFormatterParams) => {
-                return "£" + params.value.toLocaleString();
-            },
-        },
-        {
-            field: "successful",
-            width: 120,
-            cellRenderer: MissionResultRenderer,
-        },
-        { field: "rocket" },
     ]);
 
-    useEffect(() => {
-        fetch("https://www.ag-grid.com/example-assets/space-mission-data.json")
-            .then((result) => result.json())
-            .then((rowData) => setRowData(rowData));
-    }, []);
+    useEffect(() => {}, [testData]);
 
     const defaultColDef = useMemo<ColDef>(() => {
         return {
-            filter: true,
-            editable: true,
+            filter: false,
+            editable: false,
         };
     }, []);
 
@@ -157,8 +130,18 @@ const Main: React.FC = () => {
         { id: 3, label: "JPN" },
     ];
 
-    const tabClick = (id: number) => {
+    const getStockData = async (country: String) => {
+        const response = await findStockByCountry(country);
+        if (response.success === true) {
+            setTestData(response.data);
+        } else {
+            console.log(response.error);
+        }
+    };
+
+    const tabClick = (id: Number, country: String) => {
         setTab(id);
+        getStockData(country);
     };
 
     return (
@@ -168,7 +151,7 @@ const Main: React.FC = () => {
                     <TabButton
                         key={button.id}
                         active={tab === button.id}
-                        onClick={() => tabClick(button.id)}
+                        onClick={() => tabClick(button.id, button.label)}
                     >
                         {button.label}
                     </TabButton>
@@ -177,7 +160,7 @@ const Main: React.FC = () => {
 
             <div style={{ minHeight: "500px", height: "calc(100vh - 15vh)" }}>
                 <AgGridReact
-                    rowData={rowData}
+                    rowData={testData}
                     columnDefs={colDefs}
                     defaultColDef={defaultColDef}
                     pagination={true}

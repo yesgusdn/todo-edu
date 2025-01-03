@@ -9,6 +9,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Signup from "../pages/Auth/Signup";
 import Main from "../pages/Main/Main";
 import Navbar from "../components/Navbar/Navbar";
+import StockInfo from "../pages/Stock/StockInfo";
 
 const Routes = () => {
     return (
@@ -18,6 +19,8 @@ const Routes = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/" element={<Main />} />
+
+                <Route path="/stock/:stockCd" element={<StockInfo />} />
 
                 <Route path="/home" element={<Home />} />
                 <Route
